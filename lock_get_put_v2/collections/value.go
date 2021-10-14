@@ -64,10 +64,7 @@ func (v *ETCDValue) Put(ctx context.Context, value []byte) (err error) {
 	next := func(ctx context.Context) error {
 		kv := clientv3.NewKV(v.Client)
 		_, err := kv.Put(ctx, v.Key, string(value))
-		if err != nil {
-			return err
-		}
-		return nil
+		return err
 	}
 	if ctx.Value(etcd_value_tx{}) == nil {
 		err = v.Tx(ctx, next)
@@ -75,7 +72,20 @@ func (v *ETCDValue) Put(ctx context.Context, value []byte) (err error) {
 		err = next(ctx)
 	}
 	return
+}
 
+func (v *ETCDValue) Del(ctx context.Context) (err error) {
+	next := func(ctx context.Context) error {
+		kv := clientv3.NewKV(v.Client)
+		_, err := kv.Delete(ctx, v.Key)
+		return err
+	}
+	if ctx.Value(etcd_value_tx{}) == nil {
+		err = v.Tx(ctx, next)
+	} else {
+		err = next(ctx)
+	}
+	return
 }
 
 type etcd_value_tx struct{}

@@ -69,6 +69,51 @@ func TestCommon(t *testing.T) {
 	})
 }
 
+func TestCommonWithDelete(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	v := ETCDValue{
+		Key:    "/aaa",
+		Client: client,
+	}
+	payload := ([]byte)("abc")
+
+	t.Run("put value", func(t *testing.T) {
+		err := v.Put(ctx, payload)
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
+
+	t.Run("get value", func(t *testing.T) {
+		raw, err := v.Get(ctx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if raw != nil && !bytes.Equal(raw, payload) {
+			t.Errorf("get cannot return: %s", raw)
+		}
+	})
+
+	t.Run("delete value", func(t *testing.T) {
+		err := v.Del(ctx)
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
+
+	t.Run("value not exists", func(t *testing.T) {
+		raw, err := v.Get(ctx)
+		if raw != nil {
+			t.Errorf("get cannot return: %s", raw)
+		}
+		if err != ErrNotFound {
+			t.Fatalf("wrong err: %s", err)
+		}
+	})
+}
+
 func TestInTx(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
