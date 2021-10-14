@@ -18,14 +18,14 @@ podman run \
 podman rm -f etcd
 
 # Purge all key-values
-podman run --net=host bitnami/etcd etcdctl del / --prefix
+podman run --rm --net=host bitnami/etcd etcdctl del / --prefix
 ```
 
 ### [./lock_get_put/main.go](./lock_get_put/main.go) lock, read, then modify the value of key
 
 ```shell
 # Watch all key-values revisions
-podman run --net=host bitnami/etcd etcdctl watch /bar --prefix
+podman run --rm --net=host bitnami/etcd etcdctl watch /bar --prefix
 
 # Run
 ETCD_CLUSTER=http://localhost:2379 go run ./lock_get_put 
