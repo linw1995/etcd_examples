@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
@@ -13,6 +14,8 @@ import (
 )
 
 const (
+	// The key of value can not be a prefix of other keys.
+	// It will cause lock forever.
 	VALUE_KEY = "/bar"
 )
 
@@ -22,26 +25,38 @@ func main() {
 
 	cli, err := clientv3.New(etcd_examples.EtcdCfgFromEnv())
 	if err != nil {
-		panic(err)
+		log.Printf("clientv3.New err: %s", err)
+		return
 	}
 
 	task := func(idx int) {
 		session, err := concurrency.NewSession(cli)
 		if err != nil {
-			panic(err)
+			log.Printf("concurrency.NewSession err: %s", err)
+			return
 		}
 
 		// Lock
-		locker := concurrency.NewLocker(session, VALUE_KEY)
-		locker.Lock()
-		defer locker.Unlock()
+		locker := concurrency.NewMutex(session, VALUE_KEY)
+		err = locker.Lock(ctx)
+		if err != nil {
+			log.Printf("locker.Lock err: %s", err)
+			return
+		}
+		defer func() {
+			err := locker.Unlock(context.Background())
+			if err != nil {
+				log.Printf("locker.Unlock err: %s", err)
+			}
+		}()
 
 		kv := clientv3.NewKV(cli)
 
 		// Read
 		resp, err := kv.Get(ctx, VALUE_KEY)
 		if err != nil {
-			panic(err)
+			log.Printf("kv.Get err: %s", err)
+			return
 		}
 
 		// Generate new value
@@ -55,7 +70,8 @@ func main() {
 		// Write
 		_, err = kv.Put(ctx, VALUE_KEY, value)
 		if err != nil {
-			panic(err)
+			log.Printf("kv.Put err: %s", err)
+			return
 		}
 	}
 
@@ -75,7 +91,8 @@ func main() {
 	kv := clientv3.NewKV(cli)
 	resp, err := kv.Get(ctx, VALUE_KEY)
 	if err != nil {
-		panic(err)
+		log.Printf("kv.Get err: %s", err)
+		return
 	}
 	fmt.Println((string)(resp.Kvs[0].Value))
 }
