@@ -40,3 +40,10 @@ podman run --rm --net=host bitnami/etcd etcdctl watch / --prefix
 # Run
 ETCD_CLUSTER=http://localhost:2379 go test ./lock_get_put_v2/... -v
 ```
+
+### [value_history](value_history/main.go) Get all historical modifications of value
+
+```shell
+# Run
+ETCD_CLUSTER=http://localhost:2379 go run ./value_history
+```
