@@ -21,7 +21,7 @@ podman rm -f etcd
 podman run --rm --net=host bitnami/etcd etcdctl del / --prefix
 ```
 
-### [lock_get_put/main.go](lock_get_put/main.go) lock, read, then modify the value of key
+### [lock_get_put](lock_get_put/main.go) lock, read, then modify the value of key
 
 ```shell
 # Watch all key-values revisions
@@ -31,7 +31,7 @@ podman run --rm --net=host bitnami/etcd etcdctl watch /bar --prefix
 ETCD_CLUSTER=http://localhost:2379 go run ./lock_get_put 
 ```
 
-### [lock_get_put_v2/collections/value_test.go](lock_get_put_v2/collections/value_test.go) modify ETCD value with lock
+### [lock_get_put_v2/collections](lock_get_put_v2/collections/value_test.go) modify ETCD value with lock
 
 ```shell
 # Watch all key-values revisions
