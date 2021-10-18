@@ -25,14 +25,15 @@ func main() {
 
 	cli, err := clientv3.New(etcd_examples.EtcdCfgFromEnv())
 	if err != nil {
-		log.Printf("clientv3.New err: %s", err)
+		log.Printf("clientv3.New err: %s\n", err)
 		return
 	}
+	defer cli.Close()
 
 	task := func(idx int) {
 		session, err := concurrency.NewSession(cli)
 		if err != nil {
-			log.Printf("concurrency.NewSession err: %s", err)
+			log.Printf("concurrency.NewSession err: %s\n", err)
 			return
 		}
 
@@ -40,13 +41,13 @@ func main() {
 		locker := concurrency.NewMutex(session, VALUE_KEY)
 		err = locker.Lock(ctx)
 		if err != nil {
-			log.Printf("locker.Lock err: %s", err)
+			log.Printf("locker.Lock err: %s\n", err)
 			return
 		}
 		defer func() {
 			err := locker.Unlock(context.Background())
 			if err != nil {
-				log.Printf("locker.Unlock err: %s", err)
+				log.Printf("locker.Unlock err: %s\n", err)
 			}
 		}()
 
@@ -70,7 +71,7 @@ func main() {
 		// Write
 		_, err = kv.Put(ctx, VALUE_KEY, value)
 		if err != nil {
-			log.Printf("kv.Put err: %s", err)
+			log.Printf("kv.Put err: %s\n", err)
 			return
 		}
 	}
@@ -91,7 +92,7 @@ func main() {
 	kv := clientv3.NewKV(cli)
 	resp, err := kv.Get(ctx, VALUE_KEY)
 	if err != nil {
-		log.Printf("kv.Get err: %s", err)
+		log.Printf("kv.Get err: %s\n", err)
 		return
 	}
 	fmt.Println((string)(resp.Kvs[0].Value))

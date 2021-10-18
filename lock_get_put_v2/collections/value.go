@@ -28,7 +28,7 @@ func (v *ETCDValue) Tx(ctx context.Context, next func(context.Context) error) er
 	defer func() {
 		err = lock.Unlock(context.Background())
 		if err != nil {
-			log.Printf("ETCDValue(%s) Tx.Unlock err: %s", v.Key, err)
+			log.Printf("ETCDValue(%s) Tx.Unlock err: %s\n", v.Key, err)
 		}
 	}()
 
