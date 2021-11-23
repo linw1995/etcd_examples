@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/coreos/etcd/clientv3"
 	"github.com/linw1995/etcd_examples"
+	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 var (

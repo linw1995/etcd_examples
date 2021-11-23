@@ -5,10 +5,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/coreos/etcd/clientv3"
-	etcdError "github.com/coreos/etcd/error"
-	"github.com/coreos/etcd/mvcc/mvccpb"
 	"github.com/linw1995/etcd_examples"
+	"go.etcd.io/etcd/api/v3/mvccpb"
+	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 const (
@@ -21,11 +20,7 @@ func GetKeyHistory(ctx context.Context, client *clientv3.Client, key string) (rv
 
 	kvc := clientv3.NewKV(client)
 	resp, err := kvc.Get(ctx, key)
-	if err != nil {
-		return
-	}
-	if resp.Count == 0 {
-		err = etcdError.NewRequestError(etcdError.EcodeKeyNotFound, key)
+	if err != nil || resp.Count == 0 {
 		return
 	}
 	rev := resp.Kvs[0].CreateRevision
