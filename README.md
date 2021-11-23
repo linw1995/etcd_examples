@@ -18,7 +18,7 @@ podman run \
 podman rm -f etcd
 
 # Purge all key-values
-podman run --rm --net=host bitnami/etcd etcdctl del / --prefix
+podman run --rm --net=host bitnami/etcd etcdctl del '' --prefix
 ```
 
 ### [lock_get_put](lock_get_put/main.go) lock, read, then modify the value of key
