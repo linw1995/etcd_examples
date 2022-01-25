@@ -20,7 +20,7 @@ const (
 )
 
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
 
 	cli, err := clientv3.New(etcd_examples.EtcdCfgFromEnv())
@@ -31,7 +31,7 @@ func main() {
 	defer cli.Close()
 
 	task := func(idx int) {
-		session, err := concurrency.NewSession(cli)
+		session, err := concurrency.NewSession(cli, concurrency.WithContext(ctx))
 		if err != nil {
 			log.Printf("concurrency.NewSession err: %s\n", err)
 			return

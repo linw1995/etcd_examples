@@ -12,7 +12,7 @@ podman run \
 	--env ALLOW_NONE_AUTHENTICATION=yes \
 	--env ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2379 \
 	-d \
-	bitnami/etcd:3.4.15
+	bitnami/etcd:3.5.1
 
 # Shutdown
 podman rm -f etcd
