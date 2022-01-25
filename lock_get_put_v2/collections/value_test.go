@@ -114,7 +114,7 @@ func TestCommonWithDelete(t *testing.T) {
 	})
 }
 
-func TestInTx(t *testing.T) {
+func TestWithLock(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
@@ -123,7 +123,7 @@ func TestInTx(t *testing.T) {
 		Client: client,
 	}
 
-	err := v.Tx(ctx, func(c context.Context) error {
+	err := v.WithLock(ctx, func(c context.Context) error {
 		raw, err := v.Get(c)
 
 		var payload string

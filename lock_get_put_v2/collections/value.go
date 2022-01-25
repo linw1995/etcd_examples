@@ -14,7 +14,7 @@ type ETCDValue struct {
 	Client *clientv3.Client
 }
 
-func (v *ETCDValue) Tx(ctx context.Context, next func(context.Context) error) error {
+func (v *ETCDValue) WithLock(ctx context.Context, next func(context.Context) error) error {
 	session, err := concurrency.NewSession(v.Client, concurrency.WithContext(ctx))
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func (v *ETCDValue) Get(ctx context.Context) (data []byte, err error) {
 		return nil
 	}
 	if ctx.Value(etcd_value_tx{}) == nil {
-		err = v.Tx(ctx, next)
+		err = v.WithLock(ctx, next)
 	} else {
 		err = next(ctx)
 	}
@@ -67,7 +67,7 @@ func (v *ETCDValue) Put(ctx context.Context, value []byte) (err error) {
 		return err
 	}
 	if ctx.Value(etcd_value_tx{}) == nil {
-		err = v.Tx(ctx, next)
+		err = v.WithLock(ctx, next)
 	} else {
 		err = next(ctx)
 	}
@@ -81,7 +81,7 @@ func (v *ETCDValue) Del(ctx context.Context) (err error) {
 		return err
 	}
 	if ctx.Value(etcd_value_tx{}) == nil {
-		err = v.Tx(ctx, next)
+		err = v.WithLock(ctx, next)
 	} else {
 		err = next(ctx)
 	}
