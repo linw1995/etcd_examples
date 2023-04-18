@@ -32,14 +32,14 @@ func main() {
 		log.Printf("Put err: %s\n", err)
 		return
 	}
-	log.Println(putRes)
+	log.Println("put response:", putRes)
 
 	putRes, err = cli.Put(ctx, "/abc", "without_lease", clientv3.WithPrevKV())
 	if err != nil {
 		log.Printf("Put err: %s\n", err)
 		return
 	}
-	log.Println(putRes)
+	log.Println("put response:", putRes)
 
 	err = session.Close()
 	if err != nil {
@@ -54,5 +54,5 @@ func main() {
 		log.Printf("Get err: %s\n", err)
 		return
 	}
-	log.Println(getRes)
+	log.Println("get response:", getRes)
 }
